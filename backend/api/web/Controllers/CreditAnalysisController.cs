@@ -1,7 +1,7 @@
 namespace backend.api.Controllers;
 
 using backend.api.Service;
-using backend.api.Dtos;
+using backend.shared.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using backend.shared.Entities;
 

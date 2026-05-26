@@ -14,7 +14,6 @@ public class CreditAnalysisService(ICreditAnalysisRepository repository, IRabbit
         {
             Name = dto.name,
             Score = dto.score,
-            Status = "Processando"
         };
         await repository.AddAsync(analysis);
         await repository.SaveChangesAsync();

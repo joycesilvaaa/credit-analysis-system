@@ -16,12 +16,16 @@ public class CreditAnalysisService(ICreditAnalysisRepository repository)
         if (analysis is null)
             return;
 
+        analysis.Status = "Processando";
+        analysis.UpdatedAt = DateTime.UtcNow;
+        await repository.SaveChangesAsync();
         await Task.Delay(3000);
-
+        
         analysis.Result =
             message.Score >= 700 ? 1 : 0;
         analysis.Status = "Finalizado";
         analysis.UpdatedAt = DateTime.UtcNow;
         await repository.SaveChangesAsync();
+        await Task.Delay(3000);
     }
 }
