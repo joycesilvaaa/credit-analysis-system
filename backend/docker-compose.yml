@@ -1,16 +1,48 @@
 services:
   postgres:
     image: postgres:16
+    container_name: database
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5432:${POSTGRES_PORT}"
-
+      - "${DB_PORT_EXTERNAL}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   rabbitmq:
     image: rabbitmq:3-management
+    container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/data
+
+  api:
+    build: ./backend/api
+    container_name: credit-analysis-api
+    ports:
+      - "${API_PORT_EXTERNAL}:8080"
+    environment:
+      - DATABASE=Host=postgres;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  worker:
+    build: ./backend/worker
+    container_name: credit-analysis-worker
+    environment:
+      - DATABASE=Host=postgres;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - postgres
+      - rabbitmq
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
