@@ -1,0 +1,35 @@
+# Docker: http://localhost:5261 | dotnet run: http://localhost:5094
+@host = http://localhost:5261
+
+### Criar (aprovada: score >= 700 e renda >= 2000)
+POST {{host}}/api/credit-analyses
+Content-Type: application/json
+
+{ "name": "Maria", "income": 5000, "score": 750 }
+
+### Criar (reprovada por score)
+POST {{host}}/api/credit-analyses
+Content-Type: application/json
+
+{ "name": "João", "income": 5000, "score": 500 }
+
+### Listar todas
+GET {{host}}/api/credit-analyses
+
+### Listar por status (Pending, Approved, Rejected)
+GET {{host}}/api/credit-analyses?status=Approved
+
+### Buscar por id
+GET {{host}}/api/credit-analyses/1
+
+### Atualizar (volta para Pending e é reavaliada)
+PUT {{host}}/api/credit-analyses/2
+Content-Type: application/json
+
+{ "name": "João", "income": 5000, "score": 720 }
+
+### Remover
+DELETE {{host}}/api/credit-analyses/1
+
+### Health check
+GET {{host}}/health
